@@ -1,0 +1,48 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ApeBlendr
+    network: goerli
+    source:
+      address: "0xf47BbBAC3218aaA1eEB8aBb8ae8Ea30c93696D7d"
+      abi: ApeBlendr
+      startBlock: 9842646
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ApeBlendrEntered
+        - ApeBlendrExited
+        - Approval
+        - AwardingFinished
+        - AwardingStarted
+        - EpochEnded
+        - NoAwardForCurrentEpoch
+        - OwnershipTransferred
+        - Transfer
+      abis:
+        - name: ApeBlendr
+          file: ./abis/ApeBlendr.json
+      eventHandlers:
+        - event: ApeBlendrEntered(address,uint256)
+          handler: handleApeBlendrEntered
+        - event: ApeBlendrExited(address,uint256)
+          handler: handleApeBlendrExited
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: AwardingFinished(uint256,uint256,address)
+          handler: handleAwardingFinished
+        - event: AwardingStarted(uint256,uint256)
+          handler: handleAwardingStarted
+        - event: EpochEnded(uint256)
+          handler: handleEpochEnded
+        - event: NoAwardForCurrentEpoch()
+          handler: handleNoAwardForCurrentEpoch
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/ape-blendr.ts
