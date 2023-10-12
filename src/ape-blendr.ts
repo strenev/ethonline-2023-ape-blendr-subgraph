@@ -1,3 +1,4 @@
+import { BigInt } from "@graphprotocol/graph-ts"
 import {
   ApeBlendrEntered as ApeBlendrEnteredEvent,
   ApeBlendrExited as ApeBlendrExitedEvent,
@@ -18,7 +19,9 @@ import {
   EpochEnded,
   NoAwardForCurrentEpoch,
   OwnershipTransferred,
-  Transfer
+  Transfer,
+  ApeBlendrStatisticsEntity,
+  UserEntity,
 } from "../generated/schema"
 
 export function handleApeBlendrEntered(event: ApeBlendrEnteredEvent): void {
@@ -33,6 +36,8 @@ export function handleApeBlendrEntered(event: ApeBlendrEnteredEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  updateCountOnEnter(event);
 }
 
 export function handleApeBlendrExited(event: ApeBlendrExitedEvent): void {
@@ -47,6 +52,8 @@ export function handleApeBlendrExited(event: ApeBlendrExitedEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  updateCountOnExit(event);
 }
 
 export function handleApproval(event: ApprovalEvent): void {
@@ -149,4 +156,52 @@ export function handleTransfer(event: TransferEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+}
+
+function updateCountOnEnter(event: ApeBlendrEnteredEvent): void {
+  let userEntity = UserEntity.load(event.params.player.toHexString());
+  let apeBlendrStatisticsEntity = ApeBlendrStatisticsEntity.load("0x1");
+
+  if (!userEntity) {
+    userEntity = new UserEntity(event.params.player.toHexString());
+    userEntity.totalStaked = new BigInt(0);
+  }
+
+  if (!apeBlendrStatisticsEntity) {
+    apeBlendrStatisticsEntity = new ApeBlendrStatisticsEntity("0x1");
+    apeBlendrStatisticsEntity.playersCount = 0;
+  }
+
+  if (userEntity.totalStaked.equals(new BigInt(0))) {
+    apeBlendrStatisticsEntity.playersCount++;
+  }
+
+  userEntity.totalStaked = userEntity.totalStaked.plus(event.params.amount);
+
+  userEntity.save();
+  apeBlendrStatisticsEntity.save();
+}
+
+function updateCountOnExit(event: ApeBlendrExitedEvent): void {
+  let userEntity = UserEntity.load(event.params.player.toHexString());
+  let apeBlendrStatisticsEntity = ApeBlendrStatisticsEntity.load("0x1");
+
+  if (!userEntity) {
+    userEntity = new UserEntity(event.params.player.toHexString());
+    userEntity.totalStaked = new BigInt(0);
+  }
+
+  if (!apeBlendrStatisticsEntity) {
+    apeBlendrStatisticsEntity = new ApeBlendrStatisticsEntity("0x1");
+    apeBlendrStatisticsEntity.playersCount = 0;
+  }
+
+  userEntity.totalStaked = userEntity.totalStaked.minus(event.params.amount);
+
+  if (userEntity.totalStaked.equals(new BigInt(0))) {
+    apeBlendrStatisticsEntity.playersCount--;
+  }
+
+  userEntity.save();
+  apeBlendrStatisticsEntity.save();
 }

@@ -79,3 +79,13 @@ type Transfer @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type ApeBlendrStatisticsEntity @entity {
+  id: ID!
+  playersCount: Int!
+}
+
+type UserEntity @entity {
+  id: ID!
+  totalStaked: BigInt!
+}

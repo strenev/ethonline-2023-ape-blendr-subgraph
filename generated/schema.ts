@@ -990,3 +990,116 @@ export class Transfer extends Entity {
     this.set("transactionHash", Value.fromBytes(value));
   }
 }
+
+export class ApeBlendrStatisticsEntity extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ApeBlendrStatisticsEntity entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type ApeBlendrStatisticsEntity must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("ApeBlendrStatisticsEntity", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): ApeBlendrStatisticsEntity | null {
+    return changetype<ApeBlendrStatisticsEntity | null>(
+      store.get_in_block("ApeBlendrStatisticsEntity", id)
+    );
+  }
+
+  static load(id: string): ApeBlendrStatisticsEntity | null {
+    return changetype<ApeBlendrStatisticsEntity | null>(
+      store.get("ApeBlendrStatisticsEntity", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get playersCount(): i32 {
+    let value = this.get("playersCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      return 0;
+    } else {
+      return value.toI32();
+    }
+  }
+
+  set playersCount(value: i32) {
+    this.set("playersCount", Value.fromI32(value));
+  }
+}
+
+export class UserEntity extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserEntity entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type UserEntity must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UserEntity", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): UserEntity | null {
+    return changetype<UserEntity | null>(store.get_in_block("UserEntity", id));
+  }
+
+  static load(id: string): UserEntity | null {
+    return changetype<UserEntity | null>(store.get("UserEntity", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get totalStaked(): BigInt {
+    let value = this.get("totalStaked");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set totalStaked(value: BigInt) {
+    this.set("totalStaked", Value.fromBigInt(value));
+  }
+}
