@@ -6,9 +6,9 @@ dataSources:
     name: ApeBlendr
     network: goerli
     source:
-      address: "0xf47BbBAC3218aaA1eEB8aBb8ae8Ea30c93696D7d"
+      address: "0xEc3A10A645a30BE7de559E365131FBbC94edCcc6"
       abi: ApeBlendr
-      startBlock: 9842646
+      startBlock: 9877231
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
